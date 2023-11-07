@@ -1,5 +1,6 @@
 var Rental = function () {};
 
+
 Rental.prototype.statement = function (customer) {
   var movies = {
     F001: { title: "Ran", code: "regular" },
