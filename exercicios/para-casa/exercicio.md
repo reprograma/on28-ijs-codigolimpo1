@@ -2,6 +2,8 @@
 
 O código a seguir, retirado de [`refactoring-exercise-javascript`](https://github.com/greatersum/refactoring-exercise-javascript/), representa o sistema base de uma locadora de DVDs. Esse sistema é um legado, e sua missão essa semana é torná-lo melhor. O que você precisa fazer é:
 
+**[SUGESTÃO DA AULA]**: entregar em um arquivo `.js` ao invés de editar o Markdown.
+
 1. Finja que você está fazendo um code review do código abaixo é: leia com atenção e anote todos os odores que você conseguir encontrar. Para cada odor, indique onde você encontrou. Se quiser, você pode escrever por que você acha que aquele código é um smell.
 
 2. Usando o que você aprendeu na aula de hoje, escolha dois odores para refatorar. Escreva sua solução no segundo bloco, a partir da linha 65.
