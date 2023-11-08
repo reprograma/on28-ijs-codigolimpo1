@@ -1,62 +1,79 @@
 var Rental = function () {};
 
-Rental.prototype.statement = function (customer) {
-  var movies = {
-    F001: { title: "Ran", code: "regular" },
-    F002: { title: "Trois Couleurs: Bleu", code: "regular" },
-    F003: { title: "Cars 2", code: "childrens" },
-    F004: { title: "Latest Hit Release", code: "new" },
-  };
+const codeMovie = { 
+  regular: 'regular', 
+  children: 'children', 
+  new: 'new'
+}
 
+const movies = {
+  F001: { title: "Ran", code: codeMovie.regular},
+  F002: { title: "Trois Couleurs: Bleu", code: codeMovie.regular},
+  F003: { title: "Cars 2", code: codeMovie.childrens},
+  F004: { title: "Latest Hit Release", code: codeMovie.new},
+};
+
+Rental.prototype.statement = function (customer) {
+
+  let result = `Registro de aluguel para ${customer.name}\n`;
+
+  calculateAmountEachMovie(customer, movies, result);
+
+  //adiciona linhas de rodapé
+  footerInformation(totalAmount, frequentRenterPoints, result);
+};
+
+function calculateAmountEachMovie(customer, movies) {
   let totalAmount = 0;
   let frequentRenterPoints = 0;
-  let result = `Rental Record for ${customer.name}\n`;
-  for (let r of customer.rentals) {
-    let movie = movies[r.movieID];
-    let thisAmount = 0;
+  let result = `Registro de aluguel para ${customer.name}\n`;
 
-    // determine amount for each movie 
+  for (let rental of customer.rentals) {
+    let movie = movies[rental.movieID];
+    let thisAmount = 0;
+    let tax = 1.5;
+
+    // determine amount for each movie
     //determina o valor de cada filme
     switch (movie.code) {
-      case "regular":
+      case codeMovie.regular:
         thisAmount = 2;
-        if (r.days > 2) {
-          thisAmount += (r.days - 2) * 1.5;
+        if (rental.days > 2) {
+          thisAmount += (rental.days - 2) * tax;
         }
         break;
-      case "new":
-        thisAmount = r.days * 3;
+
+      case codeMovie.new:
+        thisAmount = rental.days * 3;
         break;
-      case "childrens":
+
+      case codeMovie.regular.childrens:
         thisAmount = 1.5;
-        if (r.days > 3) {
-          thisAmount += (r.days - 3) * 1.5;
+        if (rental.days > 3) {
+          thisAmount += (rental.days - 3) * tax;
         }
         break;
+
+      default:
+        thisAmount = 1
+        thisAmount += (rental.days - 1) * tax;
     }
 
-    //add frequent renter points 
     //adiciona pontos de locatário frequente
-
     frequentRenterPoints++;
 
-    // add bonus for a two day new release rental 
     // adiciona bônus para um aluguel de lançamento de dois dias
+    if (movie.code === "new" && rental.days > 2) frequentRenterPoints++;
 
-    if (movie.code === "new" && r.days > 2) frequentRenterPoints++;
-
-    //print figures for this rental 
     //imprime os valores deste aluguel
-
     result += `\t${movie.title}\t${thisAmount}\n`;
     totalAmount += thisAmount;
   }
+}
 
-  // add footer lines 
-  //adiciona linhas de rodapé
-  
-  result += `Amount owed is ${totalAmount}\n`;
-  result += `You earned ${frequentRenterPoints} frequent renter points\n`;
+function footerInformation(totalAmount, frequentRenterPoints) {
+  result += `O valor devido é ${totalAmount}\n`;
+  result += `Você ganhou ${frequentRenterPoints} pontos de locatário frequente\n`;
 
   return result;
-};
+}
