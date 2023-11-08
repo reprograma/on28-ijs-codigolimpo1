@@ -6,25 +6,37 @@ class Rental {
       F003: { title: "Cars 2", code: "childrens" },
       F004: { title: "Latest Hit Release", code: "new" },
     };
+
+    this.totalAmount = 0;
+    this.frequentRenterPoints = 0;
+    this.result = "";
   }
 
-  calculateTotalAmount(movie, days) {
+  calculateTotalRental(movie, days) {
     let amount = 0;
+
+    const AMOUNT_MOVIE = {
+      NEW: 0,
+      CHILDREN: 1.5,
+      EXTRA_CHILDREN: 1.5,
+      REGULAR: 2,
+      EXTRA_REGULAR: 1.5,
+    };
 
     switch (movie.code) {
       case "regular":
-        amount = 2;
+        amount = AMOUNT_MOVIE.REGULAR;
         if (days > 2) {
-          amount += (days - 2) * 1.5;
+          amount += (days - 2) * AMOUNT_MOVIE.EXTRA_REGULAR;
         }
         break;
       case "new":
         amount = days * 3;
         break;
       case "childrens":
-        amount = 1.5;
+        amount = AMOUNT_MOVIE.CHILDREN;
         if (days > 3) {
-          amount += (days - 3) * 1.5;
+          amount += (days - 3) * AMOUNT_MOVIE.EXTRA_CHILDREN;
         }
         break;
     }
@@ -32,40 +44,40 @@ class Rental {
     return amount;
   }
 
+  calculateRenterPoints(movie, days) {
+    return movie.code === "new" && days > 2 ? 2 : 1;
+  }
+
+  printTotalRental() {
+    this.result += `Amount owed is ${this.totalAmount}\n`;
+    return this.result;
+  }
+
+  printRenterPoints() {
+    this.result += `You earned ${this.frequentRenterPoints} frequent renter points\n`;
+    return this.result;
+  }
+
   statement(customer) {
-    let totalAmount = 0;
-    let frequentRenterPoints = 0;
-    let result = `Rental Record for ${customer.name}\n`;
+    this.result = `Rental Record for ${customer.name}\n`;
 
-    for (let r of customer.rentals) {
-      let movie = this.movies[r.movieID];
-      let thisAmount = this.calculateTotalAmount(movie, r.days);
+    const rentalResults = customer.rentals.map((rental) => {
+      const movie = this.movies[rental.movieID];
+      const thisAmount = this.calculateTotalRental(movie, rental.days);
+      this.frequentRenterPoints += this.calculateRenterPoints(
+        movie,
+        rental.days
+      );
 
-      frequentRenterPoints++;
-      if (movie.code === "new" && r.days > 2) frequentRenterPoints++;
+      this.totalAmount += thisAmount;
+      return `${rental.title} - ${thisAmount}`;
+    });
 
-      // print figures for this rental
-      result += `\t${movie.title}\t${thisAmount}\n`;
-      totalAmount += thisAmount;
-    }
+    this.result += rentalResults.join("\n") + "\n";
 
-    // add footer lines
-    result += `Amount owed is ${totalAmount}\n`;
-    result += `You earned ${frequentRenterPoints} frequent renter points\n`;
+    this.printTotalRental();
+    this.printRenterPoints();
 
-    return result;
+    return this.result;
   }
 }
-
-const customer = {
-  name: "Verônica",
-  rentals: [
-    { movieID: "F001", title: "Ran", code: "regular", days: 3 },
-    { movieID: "F004", title: "Latest Hit Release", code: "new", days: 2 },
-    { movieID: "F003", title: "Cars 2", code: "childrens", days: 5 },
-  ],
-};
-
-const rental = new Rental();
-const statement = rental.statement(customer);
-console.log(statement);
