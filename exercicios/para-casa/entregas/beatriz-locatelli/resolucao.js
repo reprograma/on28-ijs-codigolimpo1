@@ -76,7 +76,10 @@ const MOVIE_CUST_BY_CATEGORY = {
 };
 
 class Rental {
-
+    days;
+    movies;
+    total;
+    
     constructor(days) {
         this.days = days;
         this.movies = [];
@@ -114,7 +117,7 @@ class Movie {
     }
 }
 
-class Cliente {
+class Client {
     name;
     points;
 
