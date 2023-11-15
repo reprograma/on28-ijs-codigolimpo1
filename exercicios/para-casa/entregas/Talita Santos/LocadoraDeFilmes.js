@@ -51,6 +51,3 @@ Rental.prototype.statement = function (customer) {
 
   return result;
 };
-
-const matrix = new Filme("Matrix");
-console.log(matrix)
